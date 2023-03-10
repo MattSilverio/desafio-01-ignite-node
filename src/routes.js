@@ -9,9 +9,7 @@ export const routes = [
     method: "POST",
     path: buildRoutePath("/tasks"),
     handler: (req, res) => {
-      const title = req.body.title;
-      const description = req.body.description;
-
+      const { title, description } = req.body;
       const task = {
         id: randomUUID(),
         title: title,
@@ -20,6 +18,12 @@ export const routes = [
         updated_at: new Date(),
         completed_at: null,
       };
+
+      if (!title && !description) {
+        return res
+          .writeHead(400)
+          .end(JSON.stringify("Title or description are required in body"));
+      }
 
       db.insert("tasks", task);
       return res.writeHead(201).end();
@@ -52,7 +56,7 @@ export const routes = [
       const [task] = db.select("tasks", { id: id });
 
       if (!task) {
-        return res.writeHead(404).end("Task not found");
+        return res.writeHead(404).end(JSON.stringify("Task not found"));
       }
 
       if (title && !description) {
@@ -87,10 +91,22 @@ export const routes = [
       const [task] = db.select("tasks", { id: id });
 
       if (!task) {
-        return res.writeHead(404).end("Task not found");
+        return res.writeHead(404).end(JSON.stringify("Task not found"));
       }
 
       db.delete("tasks", id);
+
+      return res.writeHead(204).end();
+    },
+  },
+  {
+    // Delete all tasks
+    method: "DELETE",
+    path: buildRoutePath("/tasks"),
+    handler: (req, res) => {
+      
+
+      db.deleteAll("tasks");
 
       return res.writeHead(204).end();
     },
@@ -103,7 +119,7 @@ export const routes = [
       const [task] = db.select("tasks", { id: id });
 
       if (!task) {
-        return res.writeHead(404).end("Task not found");
+        return res.writeHead(404).end(JSON.stringify("Task not found"));
       }
 
       const isTaskCompleted = task.completed_at !== null ? true : false;

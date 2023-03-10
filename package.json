@@ -5,9 +5,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node --watch src/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node --watch src/server.js"
   },
   "author": "Matheus Phillipo Silverio Silva",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "csv": "^6.2.7"
+  }
 }
